@@ -64,9 +64,9 @@ lumped_params = getLumpedParams_DIP(mass_kg,height_m,gender,plane,pose,agegroup)
 lumped_params.h_foot = 0.07;        % distance of ankle joint from floor
 input_struct.lumped_params = lumped_params;
 input_struct.controller_params.K_x =... % feedback gains
-    [ 270  240  100   47;
-     -240  180  -60   14];
-input_struct.motorNoiseRatio = 0.6;     % motor noise ratio: ankle noise level over hip noise level
+    [ 530  350  180   75;
+        5  230   16   33];
+input_struct.motorNoiseRatio = 0.01;     % motor noise ratio: ankle noise level over hip noise level
 
 %% Human vs. model
 [f_data_Hz, zIP_data] = getZIPfromData(data_original);

@@ -3,6 +3,7 @@
 %
 % Author: Rika Sugimoto Dimitrova (rikasd@mit.edu)
 % 2026-06-13
+% Updated: 2026-11-06
 
 clear;clc;close all;
 %%
@@ -81,28 +82,73 @@ for iTrial = 1:3 % for each trial of data
 
 end % iTrial = 1:3
 
+%% Plot first trial of human data and noise as example representative plots
+
+figure;
+subplot(3,1,1);
+plot(human_data.Time_s_',data_original{1}.FootForce(1,:));
+ylabel('F_x (N)');ylim([-10,10]);
+subplot(3,1,2);
+plot(human_data.Time_s_',data_original{1}.FootForce(2,:));
+ylabel('F_z (N)');ylim([530,550]);
+subplot(3,1,3);
+plot(human_data.Time_s_',data_original{1}.COP);
+ylabel('x_{CoP} (m)');ylim([-0.091,-0.069]);
+xlabel('Time (s)');
+sgtitle('Human data');
+
+forceplate_data = ...
+        load(['Forceplate_noise\forceplate1_noise' num2str(1) '.mat']); 
+figure;
+subplot(3,1,1);
+plot(forceplate_data.time_s',forceplate_data.Fx_N);
+ylabel('F_x (N)');ylim([-10,10]);
+subplot(3,1,2);
+plot(forceplate_data.time_s',forceplate_data.Fz_N);
+ylabel('F_z (N)');ylim([-10,10]);
+subplot(3,1,3);
+noise_xCOP_m = -forceplate_data.My_Nm./(mass_kg*G_MPS + forceplate_data.Fz_N);
+plot(forceplate_data.time_s',noise_xCOP_m);
+ylabel('x_{CoP} (m)');ylim([-0.011,0.011]);
+xlabel('Time (s)');
+sgtitle('Force plate 1 measurement noise');
+
+figure;
+subplot(3,1,1);
+plot(human_data.Time_s_',data_noisy{1}.FootForce(1,:));
+ylabel('F_x (N)');
+subplot(3,1,2);
+plot(human_data.Time_s_',data_noisy{1}.FootForce(2,:));
+ylabel('F_z (N)');
+subplot(3,1,3);
+plot(human_data.Time_s_',data_noisy{1}.COP);
+ylabel('x_{CoP} (m)');
+xlabel('Time (s)');
+sgtitle('Human data + force plate 1 noise')
+
 %% Compute and plot zIP from original and noisy data
 
 [f_Hz, zIP_original, GOF_original] = getZIPfromData(data_original);
 [~, zIP_noisy, GOF_noisy] = getZIPfromData(data_noisy);
 
-figure;hold on;
-plot(f_Hz,zIP_original,'--');
-plot(f_Hz,zIP_noisy);
+fig = figure('Units', 'centimeters', 'Position', [0 0 26 10.5]);
+colors = get(gca,'colororder');
+t = tiledlayout(1, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
+
+nexttile
+hold on;
+plot(f_Hz,zIP_original,'k--');
+plot(f_Hz,zIP_noisy,'Color',colors(1,:));
 xlim([0,6]);xticks(0:6);
 ylim([0,3]);
 xlabel('Frequency (Hz)');
 ylabel({'Intersection point height','normalized by CoM height'});
 yline(1,'k--');
 legend('Original','Noise-added');
-
-%% Plot difference between clean and noisy zIP
-figure;hold on;
-plot(f_Hz,abs(zIP_noisy - zIP_original));
-xlim([0,6]);xticks(0:6);
-ylim([0,0.4]);
-xlabel('Frequency (Hz)');
-ylabel('Absolute error');
+text(-0.2, 1.12, 'A', 'Units', 'normalized', ...
+     'FontWeight', 'bold', 'VerticalAlignment', 'top', ...
+     'HorizontalAlignment', 'left','FontSize', 20)
+title('Force plate 1');
 
 %%
 %% Test force plate 2
@@ -198,20 +244,16 @@ params.window_size = 2^13;
 [f2_Hz, zIP_noisy] = getZIPfromData(data_noisy,params);
 [f_Hz, zIP_original] = getZIPfromData(data_original,params);
 
-figure;hold on;
-plot(f_Hz,zIP_original,'--');
-plot(f2_Hz,zIP_noisy);
+nexttile
+hold on;
+plot(f_Hz,zIP_original,'k--');
+plot(f_Hz,zIP_noisy,'Color',colors(2,:));
 xlim([0,6]);xticks(0:6);
 ylim([0,3]);
 xlabel('Frequency (Hz)');
-ylabel({'Intersection point height','normalized by CoM height'});
 yline(1,'k--');
 legend('Original','Noise-added');
-
-%% Plot difference between clean and noisy zIP
-figure;hold on;
-plot(f_Hz,abs(zIP_noisy - zIP_original));
-xlim([0,6]);xticks(0:6);
-ylim([0,0.4]);
-xlabel('Frequency (Hz)');
-ylabel('Absolute error');
+text(-0.14, 1.12, 'B', 'Units', 'normalized', ...
+     'FontWeight', 'bold', 'VerticalAlignment', 'top', ...
+     'HorizontalAlignment', 'left','FontSize', 20)
+title('Force plate 2');

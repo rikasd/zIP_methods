@@ -5,6 +5,7 @@
 %
 % Author: Rika Sugimoto Dimitrova (rikasd@mit.edu)
 % 2026-06-15
+% Updated: 2026-11-06
 
 clear;clc;close all;
 %%
@@ -55,22 +56,35 @@ for iTrial = 1:3 % for each trial of data
 end % iTrial = 1:3
 
 
+%%
+fig = figure('Units', 'centimeters', 'Position', [0 0 26 10]);
+colors = get(gca,'colororder');
+line_type = {'-.','--','-'};
+colors_reordered(1,:) = colors(3,:);
+colors_reordered(2,:) = colors(2,:);
+colors_reordered(3,:) = colors(1,:);
+t = tiledlayout(1, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
+
 %% Effect of number of trials
 
 [f_Hz{1}, zIP{1}] = getZIPfromData(data_original);
 [f_Hz{2}, zIP{2}] = getZIPfromData(data_original{1});
 [f_Hz{3}, zIP{3}] = getZIPfromData({data_original{1},data_original{2}});
 
-figure;hold on;colors = get(gca,'colororder');
-plot(f_Hz{2},zIP{2},'-','Color',colors(3,:));
-plot(f_Hz{3},zIP{3},'-.','Color',colors(2,:));
-plot(f_Hz{1},zIP{1},'--','Color',colors(1,:));
+nexttile;hold on;colors = get(gca,'colororder');
+plot(f_Hz{2},zIP{2},'-.','Color',colors(1,:));
+plot(f_Hz{3},zIP{3},'--','Color',colors(2,:));
+plot(f_Hz{1},zIP{1},'-','Color',colors(3,:));
 xlim([0,6]);xticks(0:6);
 ylim([0,3]);
 xlabel('Frequency (Hz)');
 ylabel({'Intersection point height','normalized by CoM height'});
 yline(1,'k--');
 legend('1 trial','2 trials','3 trials');
+
+text(-0.2, 1.08, 'A', 'Units', 'normalized', ...
+     'FontWeight', 'bold', 'VerticalAlignment', 'top', ...
+     'HorizontalAlignment', 'left','FontSize', 20)
 
 for i = 2:3
 index_freq = find((f_Hz{i} > 0).*(f_Hz{i} < 6));
@@ -79,14 +93,7 @@ end
 
 %% Effect of trial duration
 
-figure;hold on;
-colors = get(gca,'colororder');
-line_type = {'-','-.','--'};
-colors_reordered(1,:) = colors(3,:);
-colors_reordered(2,:) = colors(2,:);
-colors_reordered(3,:) = colors(1,:);
-xlim([0,6]);xticks(0:6);
-ylim([0,3]);
+nexttile;hold on;
 
 i = 1;
 
@@ -128,17 +135,20 @@ end % iTrial = 1:3
 [f_Hz{i}, zIP{i}] = getZIPfromData(data_original);
 
 
-plot(f_Hz{i},zIP{i},line_type{i},'Color',colors_reordered(i,:));
+plot(f_Hz{i},zIP{i},line_type{i});
 
 i = i + 1;
 
 end
 
+xlim([0,6]);xticks(0:6);
+ylim([0,3]);
 xlabel('Frequency (Hz)');
-ylabel({'Intersection point height','normalized by CoM height'});
 yline(1,'k--');
 legend('10 s x 3','30 s x 3','60 s x 3');
 
+text(-0.15, 1.08, 'B', 'Units', 'normalized', ...
+     'FontWeight', 'bold', 'VerticalAlignment', 'top','FontSize', 20)
 
 for i = 2:3
 index_freq = find((f_Hz{i} > 0).*(f_Hz{i} < 6));

@@ -1,6 +1,6 @@
 % 
 % Compute zIP from Santos and Duarte's data 
-% and compare with single inverted pendulum model
+% and compare with single inverted pendulum (SIP) model
 %
 % Author: Rika Sugimoto Dimitrova (rikasd@mit.edu)
 % 2026-06-20

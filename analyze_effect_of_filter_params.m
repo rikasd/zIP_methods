@@ -5,6 +5,7 @@
 %
 % Author: Rika Sugimoto Dimitrova (rikasd@mit.edu)
 % 2026-06-15
+% Updated: 2026-11-06
 
 clear;clc;close all;
 %%
@@ -54,6 +55,10 @@ for iTrial = 1:3 % for each trial of data
 
 end % iTrial = 1:3
 
+%%
+fig = figure('Units', 'centimeters', 'Position', [0 0 26 20]);
+t = tiledlayout(2, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
+
 %% Effect of window size
 params.window_taper_option = 2;
 params.detrend_option = 3;
@@ -67,16 +72,20 @@ params.window_size = 2^10;
 params.window_size = 2^11;
 [f_Hz{4}, zIP{4}] = getZIPfromData(data_original,params);
 
-figure;hold on;colors = get(gca,'colororder');
-plot(f_Hz{4},zIP{4}+1.5,'.','Color',colors(5,:),'MarkerSize',10);
-plot(f_Hz{3},zIP{3}+1,'.','Color',colors(3,:),'MarkerSize',10);
-plot(f_Hz{1},zIP{1}+0.5,'.','Color',colors(1,:),'MarkerSize',10);
-plot(f_Hz{2},zIP{2},'.','Color',colors(2,:),'MarkerSize',10);
+nexttile;hold on;colors = get(gca,'colororder');
+plot(f_Hz{4},zIP{4},'-','Color',colors(1,:),'MarkerSize',10);
+plot(f_Hz{3},zIP{3},'-.','Color',colors(2,:),'MarkerSize',10);
+plot(f_Hz{2},zIP{2},'--','Color',colors(3,:),'MarkerSize',10);
+plot(f_Hz{1},zIP{1},'.','Color',colors(4,:),'MarkerSize',10);
 xlim([0,6]);xticks(0:6);
-ylim([0,4]);yticks('');
+ylim([0,2.5]);
 xlabel('Frequency (Hz)');
-ylabel({'Intersection point height','(curves offset for clarity)'});
+ylabel('Intersection point height');
 legend('2^{11} (20.5 s)','2^{10} (10.2 s)','2^9 (5.12 s)','2^8 (2.56 s)');
+
+text(-0.18, 1.06, 'A', 'Units', 'normalized', ...
+     'FontWeight', 'bold', 'VerticalAlignment', 'top', ...
+     'HorizontalAlignment', 'left','FontSize', 20)
 
 for i = 1:4
 index_freq = find((f_Hz{i} > 1).*(f_Hz{i} < 6));
@@ -95,15 +104,17 @@ params.window_taper_option = 1;
 params.window_taper_option = 3;
 [f_Hz{3}, zIP{3}] = getZIPfromData(data_original,params);
 
-figure;hold on;colors = get(gca,'colororder');
-plot(f_Hz{1},zIP{1}+1.5,'-','Color',colors(5,:));
-plot(f_Hz{3},zIP{3}+1,'-.','Color',colors(3,:));
-plot(f_Hz{2},zIP{2}+0.5,'--','Color',colors(1,:));
+nexttile;hold on;colors = get(gca,'colororder');
+plot(f_Hz{1},zIP{1},'-','Color',colors(1,:));
+plot(f_Hz{3},zIP{3},'-.','Color',colors(2,:));
+plot(f_Hz{2},zIP{2},'--','Color',colors(3,:));
 xlim([0,6]);xticks(0:6);
-ylim([0,4]);yticks('');
+ylim([0,2.5]);
 xlabel('Frequency (Hz)');
-ylabel({'Intersection point height','(curves offset for clarity)'});
+ylabel('Intersection point height');
 legend('Rectangular','Hamming','Hann');
+text(-0.18, 1.06, 'B', 'Units', 'normalized', ...
+     'FontWeight', 'bold', 'VerticalAlignment', 'top','FontSize', 20)
 
 for i = 1:3
 index_freq = find((f_Hz{i} > 1).*(f_Hz{i} < 6));
@@ -122,15 +133,17 @@ params.detrend_option = 1;
 params.detrend_option = 2;
 [f_Hz{2}, zIP{2}] = getZIPfromData(data_original,params);
 
-figure;hold on;colors = get(gca,'colororder');
-plot(f_Hz{1},zIP{1}+1.5,'-','Color',colors(5,:));
-plot(f_Hz{2},zIP{2}+1,'-.','Color',colors(3,:));
-plot(f_Hz{3},zIP{3}+0.5,'--','Color',colors(1,:));
+nexttile;hold on;colors = get(gca,'colororder');
+plot(f_Hz{1},zIP{1},'-','Color',colors(1,:));
+plot(f_Hz{2},zIP{2},'-.','Color',colors(2,:));
+plot(f_Hz{3},zIP{3},'--','Color',colors(3,:));
 xlim([0,6]);xticks(0:6);
-ylim([0,4]);yticks('');
+ylim([0,2.5]);
 xlabel('Frequency (Hz)');
-ylabel({'Intersection point height','(curves offset for clarity)'});
+ylabel('Intersection point height');
 legend('no detrend','zero-mean','linear detrend');
+text(-0.18, 1.06, 'C', 'Units', 'normalized', ...
+     'FontWeight', 'bold', 'VerticalAlignment', 'top','FontSize', 20)
 
 for i = 1:2
 index_freq = find((f_Hz{i} > 0).*(f_Hz{i} < 6));

@@ -1,9 +1,9 @@
-function lumped_params = getLumpedParams_DIP(totalMass_kg,totalHeight_m,gender,plane,pose,agegroup)
+function lumped_params = getLumpedParams_DIP(totalMass_kg,totalHeight_m,sex,plane,pose,agegroup)
 %% Compute lumped parameters for double inverted pendulum model
 %
 % Input: - totalMass_kg  = total mass of human, in kilograms
 %        - totalHeight_m = total height of human, in meters
-%        - gender        = 'F': female, 'M': male
+%        - sex           = 'F': female, 'M': male
 %        - plane         = 'frt': frontal plane, 'sgt': sagittal plane
 %        - pose          = 'pose_I': arms adducted, 'pose_T': arms abducted
 %        - agegroup      = 1: young, 2: old
@@ -46,17 +46,17 @@ end
 [ClassUpperarm,ClassForearm,ClassHand,ClassThigh,ClassHead,ClassTrunk,ClassShank]...
     = getLinks(agegroup);
 
-Upperarm = ClassUpperarm.assignLink(totalMass_kg, totalHeight_m, gender, plane);
-Forearm = ClassForearm.assignLink(totalMass_kg, totalHeight_m, gender, plane);
-Hand = ClassHand.assignLink(totalMass_kg, totalHeight_m, gender, plane);
-Thigh = ClassThigh.assignLink(totalMass_kg, totalHeight_m, gender, plane);
-Head = ClassHead.assignLink(totalMass_kg, totalHeight_m, gender, plane);
-Trunk = ClassTrunk.assignLink(totalMass_kg, totalHeight_m, gender, plane);
-Shank = ClassShank.assignLink(totalMass_kg, totalHeight_m, gender, plane);
+Upperarm = ClassUpperarm.assignLink(totalMass_kg, totalHeight_m, sex, plane);
+Forearm = ClassForearm.assignLink(totalMass_kg, totalHeight_m, sex, plane);
+Hand = ClassHand.assignLink(totalMass_kg, totalHeight_m, sex, plane);
+Thigh = ClassThigh.assignLink(totalMass_kg, totalHeight_m, sex, plane);
+Head = ClassHead.assignLink(totalMass_kg, totalHeight_m, sex, plane);
+Trunk = ClassTrunk.assignLink(totalMass_kg, totalHeight_m, sex, plane);
+Shank = ClassShank.assignLink(totalMass_kg, totalHeight_m, sex, plane);
 
 % shoulder longitudinal and transverse distances from the hip joint
-l_sjc = L_SJC(totalHeight_m, gender);
-w_sjc = w_SJC(totalHeight_m, gender, plane);
+l_sjc = L_SJC(totalHeight_m, sex);
+w_sjc = w_SJC(totalHeight_m, sex, plane);
 
 link1.m = 2*(Shank.m + Thigh.m);
 link2.m = 2*(Upperarm.m + Forearm.m + Hand.m) + Trunk.m + Head.m;
@@ -108,21 +108,21 @@ lumped_params.L1 = link1.L;
 lumped_params.L2 = link2.L;
 
 %%
-function l_sjc = L_SJC(totalHeight, gender)
-    switch gender
+function l_sjc = L_SJC(totalHeight, sex)
+    switch sex
         case 'F'
             l_sjc = 497.9/1735 * totalHeight;
         case 'M'
             l_sjc = 515.5/1741 * totalHeight;
     end
 end
-function w_sjc = w_SJC(totalHeight, gender, plane)
+function w_sjc = w_SJC(totalHeight, sex, plane)
 % obtained from NASA standards, averaged 5th, 50th, 95th percentile data
     switch plane
         case 'sgt'
             w_sjc = 0;
         case 'frt'
-            switch gender
+            switch sex
                 case 'F'
                     w_sjc = 0.23/2 * totalHeight;
                     % Japanese, 40 yo, 2000

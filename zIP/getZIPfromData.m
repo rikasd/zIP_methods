@@ -36,6 +36,9 @@ function [f_zIP, zIP_ratio, GOF] = getZIPfromData(data,params)
 %      - f_int = BPF bandwidth (default: 0.2)
 %      - f_i = min frequency to compute zIP for, using BPF method
 %      - f_f = max frequency to compute zIP for, using BPF method
+%      - bool_detrend_Fx = boolean indicating whether to subtract the mean
+%             from the shear force data before computing force orientation
+%             (default: true)
 %
 % Outputs:
 % f_zIP     = frequencies at which zIP is evaluated
@@ -47,7 +50,7 @@ function [f_zIP, zIP_ratio, GOF] = getZIPfromData(data,params)
 %
 % Author: Rika Sugimoto Dimitrova (rikasd@mit.edu)
 % 2024-02-06
-% Last updated: 2026-07-30
+% Last updated: 2026-11-06
 
 % CPSD detrend settings
 iRAW = 1;
@@ -68,6 +71,7 @@ window_size = 2^9;
 detrend_option = iDETREND;
 window_taper_option = iHANNWIN;
 f_int = 0.2; % BPF frequency interval
+bool_detrend_Fx = true;
 
 if iscell(data)
     data_cell = data;
@@ -121,6 +125,10 @@ else
     f_f = 8;
 end
 
+if nargin > 1 && isfield(params,'bool_detrend_Fx')
+    bool_detrend_Fx = params.bool_detrend_Fx;
+end
+
 switch window_taper_option
     case iRECTWIN
         windowtaper = rectwin(window_size);
@@ -147,6 +155,9 @@ switch method
             Fx = data_cell{iTrial}.FootForce(iX,:); % horizontal ground reaction force            
             COP_x = data_cell{iTrial}.COP;          % 1D CoP
             Fz = data_cell{iTrial}.FootForce(iZ,:); % vertical ground reaction force
+            if bool_detrend_Fx
+                Fx = detrend(Fx,0);
+            end
             theta_F = -Fx./Fz;
             switch detrend_option
                 case iRAW
@@ -221,6 +232,9 @@ switch method
             COP_x = data_cell{iTrial}.COP(iX,:);
             Fx = data_cell{iTrial}.FootForce(iX,:);
             Fz = data_cell{iTrial}.FootForce(iZ,:);
+            if bool_detrend_Fx
+                Fx = detrend(Fx,0);
+            end
             theta_F = -Fx./Fz;
     
             zIP = zeros(length(f_bpf),1);
