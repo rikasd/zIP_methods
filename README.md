@@ -14,6 +14,10 @@ Supplementary material for "The intersection-point-height measure of human stand
     \model_DIP\        contains functions related to the double-inverted-pendulum
                        balance model
 
+    \Results\          contains analysis results that can be plotted
+                       instead of computing the results from raw data
+                       which can take some time
+
     \Santos2016Data\   download data from Santos and Duarte (2016) and add them
                        to this folder
                       
